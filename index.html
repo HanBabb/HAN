@@ -9,10 +9,8 @@
 <body>
     <div class="game-wrapper">
         <div class="game-container">
-            <div class="canvas-container">
-                <canvas id="gameCanvas" width="300" height="600"></canvas>
-            </div>
-            <div class="game-info">
+            <!-- 左侧控制区 -->
+            <div class="control-panel">
                 <h1>俄罗斯方块</h1>
                 <div class="status">
                     <div class="score">分数: <span id="score">0</span></div>
@@ -42,6 +40,12 @@
                         <li>↓ : 加速下落</li>
                         <li>空格 : 直接落下</li>
                     </ul>
+                </div>
+            </div>
+            <!-- 右侧游戏区 -->
+            <div class="game-area">
+                <div class="canvas-container">
+                    <canvas id="gameCanvas" width="300" height="600"></canvas>
                 </div>
             </div>
         </div>
