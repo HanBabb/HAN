@@ -51,10 +51,11 @@ class Tetris {
         // 绑定键盘事件
         document.addEventListener('keydown', this.handleKeyPress.bind(this));
 
-        // 绑定触屏事件
-        this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this));
-        this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this));
-        this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this));
+        // 绑定移动端按钮事件
+        document.getElementById('rotateBtn')?.addEventListener('click', () => this.rotate());
+        document.getElementById('leftBtn')?.addEventListener('click', () => this.moveLeft());
+        document.getElementById('rightBtn')?.addEventListener('click', () => this.moveRight());
+        document.getElementById('dropBtn')?.addEventListener('click', () => this.moveDown());
     }
 
     start() {
@@ -124,7 +125,22 @@ class Tetris {
     }
 
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // 保存 Canvas 的原始尺寸
+        const originalWidth = this.canvas.width;
+        const originalHeight = this.canvas.height;
+        
+        // 获取实际显示尺寸
+        const displayWidth = this.canvas.clientWidth;
+        const displayHeight = this.canvas.clientHeight;
+        
+        // 如果显示尺寸与原始尺寸不同，调整 Canvas 尺寸
+        if (originalWidth !== displayWidth || originalHeight !== displayHeight) {
+            this.canvas.width = displayWidth;
+            this.canvas.height = displayHeight;
+            this.ctx.scale(displayWidth / originalWidth, displayHeight / originalHeight);
+        }
+
+        this.ctx.clearRect(0, 0, originalWidth, originalHeight);
         
         // 绘制已固定的方块
         this.board.forEach((row, y) => {
@@ -156,6 +172,12 @@ class Tetris {
                     }
                 });
             });
+        }
+
+        // 恢复原始尺寸
+        if (originalWidth !== displayWidth || originalHeight !== displayHeight) {
+            this.canvas.width = originalWidth;
+            this.canvas.height = originalHeight;
         }
     }
 
@@ -315,49 +337,6 @@ class Tetris {
 
         this.draw();
         requestAnimationFrame(this.update.bind(this));
-    }
-
-    handleTouchStart(event) {
-        if (this.gameOver || this.isPaused) return;
-        const touch = event.touches[0];
-        this.touchStartX = touch.clientX;
-        this.touchStartY = touch.clientY;
-    }
-
-    handleTouchMove(event) {
-        if (!this.touchStartX || !this.touchStartY) return;
-        
-        const touch = event.touches[0];
-        const diffX = touch.clientX - this.touchStartX;
-        const diffY = touch.clientY - this.touchStartY;
-        
-        // 检测水平滑动
-        if (Math.abs(diffX) > 30) { // 滑动距离超过30px才触发
-            if (diffX > 0) {
-                this.moveRight();
-            } else {
-                this.moveLeft();
-            }
-            this.touchStartX = touch.clientX;
-        }
-        
-        // 检测垂直滑动
-        if (Math.abs(diffY) > 30) {
-            if (diffY > 0) {
-                this.moveDown();
-            } else {
-                this.rotate();
-            }
-            this.touchStartY = touch.clientY;
-        }
-        
-        this.draw();
-        event.preventDefault(); // 防止页面滚动
-    }
-
-    handleTouchEnd() {
-        this.touchStartX = null;
-        this.touchStartY = null;
     }
 }
 
