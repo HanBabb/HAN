@@ -56,6 +56,33 @@ class Tetris {
         document.getElementById('leftBtn')?.addEventListener('click', () => this.moveLeft());
         document.getElementById('rightBtn')?.addEventListener('click', () => this.moveRight());
         document.getElementById('dropBtn')?.addEventListener('click', () => this.moveDown());
+
+        // 设置画布尺寸
+        this.setupCanvas();
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', () => this.setupCanvas());
+    }
+
+    setupCanvas() {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            // 在移动端，保持画布原始宽高比
+            const containerHeight = window.innerHeight * 0.6;
+            const containerWidth = this.canvas.parentElement.clientWidth - 20;
+            const scale = Math.min(containerHeight / 600, containerWidth / 300);
+            
+            this.canvas.style.width = `${300 * scale}px`;
+            this.canvas.style.height = `${600 * scale}px`;
+        } else {
+            // 在桌面端，使用原始尺寸
+            this.canvas.style.width = '300px';
+            this.canvas.style.height = '600px';
+        }
+        
+        // 保持画布的原始像素尺寸
+        this.canvas.width = 300;
+        this.canvas.height = 600;
     }
 
     start() {
@@ -125,59 +152,71 @@ class Tetris {
     }
 
     draw() {
-        // 保存 Canvas 的原始尺寸
-        const originalWidth = this.canvas.width;
-        const originalHeight = this.canvas.height;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // 获取实际显示尺寸
-        const displayWidth = this.canvas.clientWidth;
-        const displayHeight = this.canvas.clientHeight;
-        
-        // 如果显示尺寸与原始尺寸不同，调整 Canvas 尺寸
-        if (originalWidth !== displayWidth || originalHeight !== displayHeight) {
-            this.canvas.width = displayWidth;
-            this.canvas.height = displayHeight;
-            this.ctx.scale(displayWidth / originalWidth, displayHeight / originalHeight);
-        }
-
-        this.ctx.clearRect(0, 0, originalWidth, originalHeight);
+        // 绘制网格背景
+        this.drawGrid();
         
         // 绘制已固定的方块
         this.board.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value) {
-                    this.ctx.fillStyle = value;
-                    this.ctx.fillRect(
-                        x * this.blockSize,
-                        y * this.blockSize,
-                        this.blockSize - 1,
-                        this.blockSize - 1
-                    );
+                    this.drawBlock(x, y, value);
                 }
             });
         });
 
         // 绘制当前方块
         if (this.currentPiece) {
-            this.ctx.fillStyle = this.currentPiece.color;
             this.currentPiece.shape.forEach((row, y) => {
                 row.forEach((value, x) => {
                     if (value) {
-                        this.ctx.fillRect(
-                            (this.currentPiece.x + x) * this.blockSize,
-                            (this.currentPiece.y + y) * this.blockSize,
-                            this.blockSize - 1,
-                            this.blockSize - 1
+                        this.drawBlock(
+                            this.currentPiece.x + x,
+                            this.currentPiece.y + y,
+                            this.currentPiece.color
                         );
                     }
                 });
             });
         }
+    }
 
-        // 恢复原始尺寸
-        if (originalWidth !== displayWidth || originalHeight !== displayHeight) {
-            this.canvas.width = originalWidth;
-            this.canvas.height = originalHeight;
+    drawBlock(x, y, color) {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(
+            x * this.blockSize,
+            y * this.blockSize,
+            this.blockSize - 1,
+            this.blockSize - 1
+        );
+        
+        // 添加高光效果
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        this.ctx.fillRect(
+            x * this.blockSize,
+            y * this.blockSize,
+            this.blockSize - 1,
+            (this.blockSize - 1) / 2
+        );
+    }
+
+    drawGrid() {
+        this.ctx.strokeStyle = 'rgba(44, 62, 80, 0.1)';
+        this.ctx.lineWidth = 0.5;
+
+        for (let x = 0; x <= this.cols; x++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x * this.blockSize, 0);
+            this.ctx.lineTo(x * this.blockSize, this.canvas.height);
+            this.ctx.stroke();
+        }
+
+        for (let y = 0; y <= this.rows; y++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y * this.blockSize);
+            this.ctx.lineTo(this.canvas.width, y * this.blockSize);
+            this.ctx.stroke();
         }
     }
 
