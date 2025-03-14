@@ -79,6 +79,7 @@ class Tetris {
         const scaledWidth = Math.floor(300 * scale);
         const scaledHeight = Math.floor(600 * scale);
 
+        // 设置画布样式
         this.canvas.style.width = `${scaledWidth}px`;
         this.canvas.style.height = `${scaledHeight}px`;
         
@@ -88,6 +89,16 @@ class Tetris {
 
         // 更新方块大小
         this.blockSize = this.canvas.width / this.cols;
+
+        // 更新下一个方块预览画布的大小
+        if (isMobile) {
+            const nextPieceSize = Math.min(80, containerWidth * 0.2);
+            this.nextCanvas.style.width = `${nextPieceSize}px`;
+            this.nextCanvas.style.height = `${nextPieceSize}px`;
+        } else {
+            this.nextCanvas.style.width = '100px';
+            this.nextCanvas.style.height = '100px';
+        }
     }
 
     start() {
