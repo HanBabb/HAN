@@ -18,29 +18,31 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
 }
 
 .game-container {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 15px;
     display: flex;
     gap: 20px;
     max-width: 1000px;
     width: 100%;
-    min-height: 80vh;
+    height: 100vh;
+    max-height: 800px;
 }
 
 /* 左侧控制面板 */
 .control-panel {
-    flex: 0 0 300px;
+    flex: 0 0 250px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding-right: 20px;
+    padding-right: 15px;
     border-right: 1px solid #eee;
+    overflow-y: auto;
 }
 
 /* 右侧游戏区域 */
@@ -50,6 +52,7 @@ body {
     justify-content: center;
     align-items: center;
     min-width: 320px;
+    overflow: hidden;
 }
 
 .canvas-container {
@@ -65,7 +68,7 @@ body {
     display: block;
     background-color: #f8f9fa;
     border: 2px solid #2c3e50;
-    max-height: 90vh;
+    max-height: 100%;
     width: auto;
 }
 
@@ -166,6 +169,8 @@ button:disabled {
 @media (max-width: 768px) {
     .game-wrapper {
         padding: 0;
+        height: 100vh;
+        overflow: hidden;
     }
 
     .game-container {
@@ -176,6 +181,7 @@ button:disabled {
         gap: 10px;
         height: 100vh;
         max-height: 100vh;
+        overflow: hidden;
     }
 
     .control-panel {
@@ -185,18 +191,21 @@ button:disabled {
         border-bottom: 1px solid #eee;
         padding-bottom: 10px;
         order: 2;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .game-area {
         flex: 1;
         order: 1;
         min-height: 60vh;
+        overflow: hidden;
     }
 
     #gameCanvas {
-        height: 100%;
-        width: auto;
-        max-height: 60vh;
+        max-width: 100%;
+        max-height: 100%;
+        height: auto;
     }
 
     .controls {
@@ -218,6 +227,7 @@ button:disabled {
     .mobile-controls button {
         padding: 15px;
         font-size: 20px;
+        min-height: 50px;
     }
 
     #rotateBtn {

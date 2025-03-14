@@ -66,23 +66,28 @@ class Tetris {
 
     setupCanvas() {
         const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
-            // 在移动端，保持画布原始宽高比
-            const containerHeight = window.innerHeight * 0.6;
-            const containerWidth = this.canvas.parentElement.clientWidth - 20;
-            const scale = Math.min(containerHeight / 600, containerWidth / 300);
-            
-            this.canvas.style.width = `${300 * scale}px`;
-            this.canvas.style.height = `${600 * scale}px`;
-        } else {
-            // 在桌面端，使用原始尺寸
-            this.canvas.style.width = '300px';
-            this.canvas.style.height = '600px';
-        }
+        const gameArea = this.canvas.parentElement;
+        const containerWidth = gameArea.clientWidth;
+        const containerHeight = gameArea.clientHeight;
+
+        // 计算最佳缩放比例
+        const scaleWidth = containerWidth / 300;
+        const scaleHeight = containerHeight / 600;
+        const scale = Math.min(scaleWidth, scaleHeight, 1); // 限制最大缩放为1
+
+        // 应用缩放
+        const scaledWidth = Math.floor(300 * scale);
+        const scaledHeight = Math.floor(600 * scale);
+
+        this.canvas.style.width = `${scaledWidth}px`;
+        this.canvas.style.height = `${scaledHeight}px`;
         
         // 保持画布的原始像素尺寸
         this.canvas.width = 300;
         this.canvas.height = 600;
+
+        // 更新方块大小
+        this.blockSize = this.canvas.width / this.cols;
     }
 
     start() {
