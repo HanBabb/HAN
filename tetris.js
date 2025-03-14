@@ -40,12 +40,21 @@ class Tetris {
             'T': '#a000f0'
         };
 
+        // 添加触屏控制
+        this.touchStartX = null;
+        this.touchStartY = null;
+        
         // 绑定按钮事件
         document.getElementById('startBtn').addEventListener('click', () => this.start());
         document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
 
         // 绑定键盘事件
         document.addEventListener('keydown', this.handleKeyPress.bind(this));
+
+        // 绑定触屏事件
+        this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this));
+        this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this));
+        this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this));
     }
 
     start() {
@@ -306,6 +315,49 @@ class Tetris {
 
         this.draw();
         requestAnimationFrame(this.update.bind(this));
+    }
+
+    handleTouchStart(event) {
+        if (this.gameOver || this.isPaused) return;
+        const touch = event.touches[0];
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+    }
+
+    handleTouchMove(event) {
+        if (!this.touchStartX || !this.touchStartY) return;
+        
+        const touch = event.touches[0];
+        const diffX = touch.clientX - this.touchStartX;
+        const diffY = touch.clientY - this.touchStartY;
+        
+        // 检测水平滑动
+        if (Math.abs(diffX) > 30) { // 滑动距离超过30px才触发
+            if (diffX > 0) {
+                this.moveRight();
+            } else {
+                this.moveLeft();
+            }
+            this.touchStartX = touch.clientX;
+        }
+        
+        // 检测垂直滑动
+        if (Math.abs(diffY) > 30) {
+            if (diffY > 0) {
+                this.moveDown();
+            } else {
+                this.rotate();
+            }
+            this.touchStartY = touch.clientY;
+        }
+        
+        this.draw();
+        event.preventDefault(); // 防止页面滚动
+    }
+
+    handleTouchEnd() {
+        this.touchStartX = null;
+        this.touchStartY = null;
     }
 }
 

@@ -12,6 +12,8 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #333;
+    overscroll-behavior: contain;
+    touch-action: none;
 }
 
 .game-container {
@@ -85,6 +87,8 @@ button {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 #startBtn {
@@ -108,4 +112,46 @@ button {
 button:disabled {
     background-color: #95a5a6;
     cursor: not-allowed;
+}
+
+/* 添加移动端响应式样式 */
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column-reverse;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .game-info {
+        width: 100%;
+        padding: 10px;
+    }
+
+    #gameCanvas {
+        width: 100%;
+        height: auto;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .controls {
+        display: none; /* 在移动端隐藏键盘控制说明 */
+    }
+
+    button {
+        padding: 15px; /* 增大按钮点击区域 */
+        margin: 10px 0;
+    }
+}
+
+/* 防止页面滚动时的弹性效果 */
+body {
+    overscroll-behavior: contain;
+    touch-action: none;
+}
+
+/* 优化移动端按钮触摸体验 */
+button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 } 
